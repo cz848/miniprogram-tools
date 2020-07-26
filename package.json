@@ -21,5 +21,10 @@
     "wechat"
   ],
   "author": "Tyler Chao",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "jest": "^26.1.0",
+    "js-sha256": "^0.9.0"
+  }
 }
