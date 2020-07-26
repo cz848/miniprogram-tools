@@ -4,6 +4,7 @@
   "description": "weixin miniprogram utility tools without dependencies",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint *.js",
     "test": "jest"
   },
   "repository": {
