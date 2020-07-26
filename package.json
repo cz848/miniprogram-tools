@@ -1,5 +1,5 @@
 {
-  "name": "wx-tools",
+  "name": "miniprogram-tools",
   "version": "1.0.0",
   "description": "weixin miniprogram utility tools without dependencies",
   "main": "index.js",

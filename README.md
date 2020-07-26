@@ -1,4 +1,4 @@
-# 小程序通用函数库wx-tools
+# 小程序通用函数库miniprogram-tools
 
 ## 文件结构
 
@@ -23,9 +23,9 @@ import {
   getSystemInfo,
   linkTo,
   storage,
-} from 'wx-tools';
+} from 'miniprogram-tools';
 
-import { isEmpty } from 'wx-tools/utils';
+import { isEmpty } from 'miniprogram-tools/utils';
 ```
 
 ## API
