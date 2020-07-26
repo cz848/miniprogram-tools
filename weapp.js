@@ -18,7 +18,7 @@ const promisifyAll = (ctx, apiList) => apiList.forEach(method => {
 
 const mp = {
   apiList: [],
-  addApis(apis = []) {
+  add(apis = []) {
     const apiList = apis.filter(x => !this.apiList.includes(x));
 
     this.apiList = this.apiList.concat(apiList);
@@ -26,7 +26,7 @@ const mp = {
   },
 };
 
-mp.addApis(config.WX_APIS);
+mp.add(config.WX_APIS);
 
 /**
  * 获取当前页面栈中的页面

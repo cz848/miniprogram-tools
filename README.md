@@ -67,7 +67,7 @@ storage.updatePrefix(PREFIX: String);
 **WX_APIS**: 配置需要Promise化的以wx开头的小程序api，这里只配置了`showToast`/`showModal`/`request`三个wx api，其它的需要在用到的地方先执行：
 
 ```javascript
-mp.addApis(wxApis: Array);
+mp.add(wxApis: Array);
 ```
 
 ### utils.js
@@ -227,10 +227,10 @@ console.log(res);
 console.log(mp.apiList);
 ```
 
-**mp.addApis(apiList: Array)**: 按需添加需要Promisify化的wx api，或在`app.js`中统一添加小程序中用到的wx api。
+**mp.add(apiList: Array)**: 按需添加需要Promisify化的wx api，或在`app.js`中统一添加小程序中用到的wx api。
 
 ```javascript
-mp.addApis(['login', 'getLocation']);
+mp.add(['login', 'getLocation']);
 
 mp.login().then(res => {
   ...
