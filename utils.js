@@ -20,11 +20,11 @@ const isEmptyArray = the => Array.isArray(the) && the.length === 0;
  * @param {array} exclusions 排除无需判断为空值的情况
  */
 const isEmpty = (the, inclusions = [], exclusions = []) => {
-  const emptyValus = ['', null, undefined, 'undefined']
+  const emptyValues = ['', null, undefined, 'undefined']
     .concat(inclusions)
     .filter(e => !exclusions.includes(e));
 
-  return emptyValus.includes(the) // 空值
+  return emptyValues.includes(the) // 空值
     || isEmptyArray(the) // 空数组
     || isEmptyObject(the); // 空对象
 };
@@ -32,15 +32,21 @@ const isEmpty = (the, inclusions = [], exclusions = []) => {
 // 过滤出有值的键并返回
 const getKeys = (data = {}) => Object.keys(data).filter(key => !isEmpty(data[key]));
 
-// 删掉json对象中值为空数组、空对象的键
-const removeEmptyValues = (data = {}) => Object.keys(data).reduce((gather, key) => {
-  const value = data[key];
-  if (!isEmpty(value)) {
-    if (isPlainObject(value) || Array.isArray(value)) gather[key] = removeEmptyValues(value);
-    else gather[key] = value;
-  }
-  return gather;
-}, Array.isArray(data) ? [] : {});
+// 删掉array/json中属性值为空值、空数组、空对象的键
+const removeEmptyValues = (data = {}) => {
+  const result = Object.keys(data).reduce((gather, key) => {
+    const value = data[key];
+    if (!isEmpty(value)) {
+      if (isPlainObject(value) || Array.isArray(value)) {
+        const oValue = removeEmptyValues(value);
+        if (!isEmpty(oValue)) gather[key] = oValue;
+      } else gather[key] = value;
+    }
+    return gather;
+  }, Array.isArray(data) ? [] : {});
+
+  return Array.isArray(data) ? result.filter(x => x !== undefined) : result;
+};
 
 // 实现深拷贝json对象的最简单版本，可以选择只拷贝某些键值
 const clone = (json = {}, keys) => JSON.parse(JSON.stringify(json, keys));

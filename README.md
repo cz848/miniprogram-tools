@@ -125,10 +125,11 @@ isEmpty(null, [], [null]) // false
 getKeys({ a: 1, b: '', c: null, d: false }) // ["a", "d"]
 ```
 
-**<a id="removeEmptyValues">removeEmptyValues</a>(input: JSON)**: 删掉json对象中值为空数组、空对象的键
+**<a id="removeEmptyValues">removeEmptyValues</a>(input: JSON)**: 删掉array/json对象中属性值为空值、空数组、空对象的键
 
 ```javascript
 removeEmptyValues({ a: 1, b: '', c: null, d: false }) // {a: 1, d: false}
+removeEmptyValues([0, 1, '', { c: 1, d: null }, { e: '' }]) // [0, 1, { c: 1 }]
 ```
 
 **<a id="clone">clone</a>(input: JSON | Array, keys?: Array | Function)**: 实现深拷贝json数据的最简单版本，可以选择只拷贝某些键值
