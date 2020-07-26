@@ -1,0 +1,24 @@
+{
+  "name": "wx-tools",
+  "version": "1.0.0",
+  "description": "weixin miniprogram utility tools without dependencies",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "cz848/miniprogram-tools"
+  },
+  "keywords": [
+    "weixin",
+    "miniprogram",
+    "utils",
+    "tools",
+    "weapp",
+    "wxapp",
+    "wechat"
+  ],
+  "author": "Tyler Chao",
+  "license": "MIT"
+}
