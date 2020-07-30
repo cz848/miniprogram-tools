@@ -15,7 +15,7 @@ import {
 } from '../utils';
 
 describe('isPlainObject', () => {
-  test('json对象', () => {
+  test('纯对象', () => {
     expect(isPlainObject({})).toBe(true);
     expect(isPlainObject(Object.create({}))).toBe(true);
     expect(isPlainObject(Object.create(null))).toBe(true);
@@ -24,20 +24,23 @@ describe('isPlainObject', () => {
       b: 2,
       c: x => x * x,
     })).toBe(true);
+    expect(isPlainObject(new Object(null))).toBe(true);
+    expect(isPlainObject(new Object(undefined))).toBe(true);
+    expect(isPlainObject(new Object({}))).toBe(true);
+  });
+
+  test('非纯对象', () => {
     expect(isPlainObject(new Map([
       ['a', 1],
       ['b', 2],
       ['c', x => x * x],
     ]))).toBe(false);
-  });
-
-  test('非json对象', () => {
     expect(isPlainObject('{}')).toBe(false);
     expect(isPlainObject([])).toBe(false);
     expect(isPlainObject('abcde')).toBe(false);
     expect(isPlainObject(100)).toBe(false);
     expect(isPlainObject(Object)).toBe(false);
-    expect(isPlainObject(Date)).toBe(false);
+    expect(isPlainObject(new Date)).toBe(false);
     expect(isPlainObject(Function)).toBe(false);
     expect(isPlainObject(RegExp)).toBe(false);
     expect(isPlainObject(new Set([0]))).toBe(false);
@@ -45,8 +48,10 @@ describe('isPlainObject', () => {
 });
 
 describe('isEmptyObject', () => {
-  test('判断是否为"空对象"', () => {
+  test('判断是否为"空纯对象"', () => {
     expect(isEmptyObject({})).toBe(true);
+    expect(isEmptyObject(Object)).toBe(false);
+    expect(isEmptyObject(new Object())).toBe(true);
     expect(isEmptyObject(Object.create(null))).toBe(true);
     expect(isEmptyObject({ a: 1 })).toBe(false);
     expect(isEmptyObject([])).toBe(false);
@@ -84,14 +89,14 @@ describe('isEmpty', () => {
 });
 
 describe('getKeys', () => {
-  test('过滤出JSON中有值的键并返回包含这些键的数组', () => {
+  test('过滤出对象中有值的键并返回包含这些键的数组', () => {
     expect(getKeys({ a: 1, b: '', c: null, d: false })).toEqual(['a', 'd']);
     expect(getKeys([0, 1, '', null, false, undefined])).toEqual(['0', '1', '4']);
   });
 });
 
 describe('removeEmptyValues', () => {
-  test('删掉json对象中值为空数组、空对象的键', () => {
+  test('删掉对象中值为空数组、空对象的键', () => {
     expect(removeEmptyValues({ a: 1, b: '', c: null, d: false })).toEqual({ a: 1, d: false });
     expect(removeEmptyValues([0, 1, '', null, false, undefined])).toEqual([0, 1, false]);
     expect(removeEmptyValues({ a: 1, b: '', c: [0, '', null], d: { a: 1, b: null }, e: [undefined] }))
@@ -101,7 +106,7 @@ describe('removeEmptyValues', () => {
 });
 
 describe('clone', () => {
-  test('实现深拷贝json数据的最简单版本，可以选择只拷贝某些键值', () => {
+  test('实现深拷贝类JSON数据的最简单版本，可以选择只拷贝某些键值', () => {
     expect(clone({ a: 1, b: '', c: null, d: false, e: undefined })).toEqual({ a: 1, b: '', c: null, d: false });
     expect(clone({ a: 1, b: '', c: null, d: false }, ['a', 'b', 'c'])).toEqual({ a: 1, b: "", c: null });
     expect(clone({ a: 1, b: '', c: null, d: x => x * x })).toEqual({ a: 1, b: "", c: null });
@@ -118,7 +123,7 @@ describe('capitalize', () => {
 });
 
 describe('toQueryString', () => {
-  test('转换JSON对象为url查询字符串', () => {
+  test('转换类JSON对象为url查询字符串', () => {
     expect(toQueryString({ c: 1, b: '', d: null, a: false, f: undefined })).toBe('c=1&a=false');
     expect(toQueryString({ c: 1, b: '', d: null, a: false, f: '中文' }, true)).toBe('c=1&a=false&f=%E4%B8%AD%E6%96%87');
     expect(toQueryString({ c: 1, b: '', d: null, a: false, f: undefined }, false, true)).toBe('a=false&c=1');

@@ -72,16 +72,17 @@ mp.add(wxApis: Array);
 
 ### utils.js
 
-**<a id="isPlainObject">isPlainObject</a>(input: any)**: 判断是否为json对象
+**<a id="isPlainObject">isPlainObject</a>(input: any)**: 判断是否为纯对象
 
 ```javascript
 isPlainObject({}) // true
+isPlainObject({ a: 1, b: 2, c: x => x * x }) // true
 isPlainObject(true) // false
 isPlainObject(null) // false
 isPlainObject('plain') // false
 ```
 
-**<a id="isEmptyObject">isEmptyObject</a>(input: any)**: 判断是否为"空对象"
+**<a id="isEmptyObject">isEmptyObject</a>(input: any)**: 判断是否为"空纯对象"
 
 ```javascript
 isEmptyObject({}) // true

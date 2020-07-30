@@ -1,6 +1,6 @@
 // 判断是否为json对象
 const isPlainObject = value => {
-  if (!value) return false;
+  if (typeof value !== 'object' || value === null) return false;
   const prototype = Object.getPrototypeOf(value);
   return Object.prototype.toString.call(value) === '[object Object]'
     || prototype === null
