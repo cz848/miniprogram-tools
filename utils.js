@@ -1,6 +1,6 @@
 // 判断是否为json对象
 const isPlainObject = value => {
-  if (typeof value !== 'object' || value === null) return false;
+  if (!value || typeof value !== 'object') return false;
   const prototype = Object.getPrototypeOf(value);
   return Object.prototype.toString.call(value) === '[object Object]'
     || prototype === null
@@ -48,7 +48,7 @@ const removeEmptyValues = (data = {}) => {
   return Array.isArray(data) ? result.filter(x => x !== undefined) : result;
 };
 
-// 实现深拷贝json对象的最简单版本，可以选择只拷贝某些键值
+// 实现深拷贝类json对象的最简单版本，可以选择只拷贝某些键值
 const clone = (json = {}, keys) => JSON.parse(JSON.stringify(json, keys));
 
 // 首字母大写

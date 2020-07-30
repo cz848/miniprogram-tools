@@ -67,12 +67,12 @@ storage.updatePrefix(PREFIX: String);
 **WX_APIS**: 配置需要Promise化的以wx开头的小程序api，这里只配置了`showToast`/`showModal`/`request`三个wx api，其它的需要在用到的地方先执行：
 
 ```javascript
-mp.add(wxApis: Array);
+mp.add(apiList: Array);
 ```
 
 ### utils.js
 
-**<a id="isPlainObject">isPlainObject</a>(input: any)**: 判断是否为纯对象
+**<a id="isPlainObject">isPlainObject</a>(input: any)**: 判断是否为键值对形式的纯对象
 
 ```javascript
 isPlainObject({}) // true
@@ -107,7 +107,7 @@ isEmptyArray({}) // false
 默认定义`''`, `null`, `undefined`, `'undefined'`,`[]`, `{}` 几种为空值的情况。
 
 - `inclusions`: 其它做为空值的情况
-- `exclusions`: 排除无需判断为空值的情况
+- `exclusions`: 排除以上无需判断为空值的情况
 
 ```javascript
 isEmpty('') // true
@@ -120,22 +120,22 @@ isEmpty(false, [false]) // true
 isEmpty(null, [], [null]) // false
 ```
 
-**<a id="getKeys">getKeys</a>(input: JSON)**: 过滤出JSON中有值的键并返回包含这些键的数组
+**<a id="getKeys">getKeys</a>(input: Object | Array)**: 过滤出对象或数组中有值的键并返回包含这些键的数组
 
 ```javascript
 getKeys({ a: 1, b: '', c: null, d: false }) // ["a", "d"]
 ```
 
-**<a id="removeEmptyValues">removeEmptyValues</a>(input: JSON)**: 删掉array/json对象中属性值为空值、空数组、空对象的键
+**<a id="removeEmptyValues">removeEmptyValues</a>(input: Object | Array)**: 删除对象或数组中属性值为空值、空数组、空对象的键
 
 ```javascript
 removeEmptyValues({ a: 1, b: '', c: null, d: false }) // {a: 1, d: false}
 removeEmptyValues([0, 1, '', { c: 1, d: null }, { e: '' }]) // [0, 1, { c: 1 }]
 ```
 
-**<a id="clone">clone</a>(input: JSON | Array, keys?: Array | Function)**: 实现深拷贝json数据的最简单版本，可以选择只拷贝某些键值
+**<a id="clone">clone</a>(input: Object | Array, keys?: Array | Function)**: 实现深拷贝json数据的最简单版本，可以选择只拷贝某些键值
 
-- `keys`: 如果该参数是一个数组，则只有包含在这个数组中的属性名才会被克隆；如果该参数是一个函数，则在克隆过程中，被克隆的值的每个属性都会经过该函数的转换和处理；属性值为`undefined` 的属性名不会被克隆
+- `keys`: 如果该参数是一个数组，则只有包含在这个数组中的属性名才会被克隆；如果该参数是一个函数，则在克隆过程中，被克隆的值的每个属性都会经过该函数的转换和处理；属性值为`undefined`以及函数的属性名不会被克隆
 
 ```javascript
 clone({ a: 1, b: '', c: null, d: false, e: undefined }) // {a: 1, b: "", c: null, d: false}
@@ -151,7 +151,7 @@ capitalize('prefix suffix') // Prefix suffix
 capitalize('prefix', 'suffix') // suffixPrefix
 ```
 
-**<a id="toQueryString">toQueryString</a>(input: JSON, encode?: Boolean, sort?: Boolean)**: 转换JSON对象为url查询字符串
+**<a id="toQueryString">toQueryString</a>(input: Object, encode?: Boolean, sort?: Boolean)**: 转换纯对象为url查询字符串
 
 - `encode`: 是否对属性值进行URL编码
 - `sort`: 是否对属性名进行排序
@@ -162,7 +162,7 @@ toQueryString({ c: 1, b: '', d: null, a: false, f: '中文' }, true) // c=1&a=fa
 toQueryString({ c: 1, b: '', d: null, a: false, f: undefined }, false, true) // a=false&c=1
 ```
 
-**<a id="generateSignature">generateSignature</a>(input: JSON, { encrypt: Function, isSorted?: Boolean, appKey?: String, token?: String, secret?: String })**: 生成签名算法
+**<a id="generateSignature">generateSignature</a>(input: Object, { encrypt: Function, isSorted?: Boolean, appKey?: String, token?: String, secret?: String })**: 生成签名算法
 
 - `encrypt`: 加密函数，一般需自行引入sha256
 - `isSorted`: 是否需要对 input 排序
@@ -276,7 +276,7 @@ storage('key', 'value', 3600) // 存储数据，有效期为1个小时
 storage.updatePrefix(appid + env);
 ```
 
-**<a id="alert">alert</a>(content: String, options?: JSON)**: 警告对话框（对模态对话框的进一步封装，并Promise化）
+**<a id="alert">alert</a>(content: String, options?: Object)**: 警告对话框（对模态对话框的进一步封装，并Promise化）
 
 - `options`: 同showModal的选项
 
@@ -285,7 +285,7 @@ alert('警告：');
 await alert('警告：');
 ```
 
-**<a id="confirm">confirm</a>(content: String, options?: JSON)**: 确认对话框（对模态对话框的进一步封装，并Promise化）
+**<a id="confirm">confirm</a>(content: String, options?: Object)**: 确认对话框（对模态对话框的进一步封装，并Promise化）
 
 - `options`: 同showModal的选项
 
@@ -297,7 +297,7 @@ if (res.confirm) {
 }
 ```
 
-**<a id="block">block</a>(content: String, options?: JSON)**: 带返回的对话框（对模态对话框的进一步封装，并Promise化）
+**<a id="block">block</a>(content: String, options?: Object)**: 带返回的对话框（对模态对话框的进一步封装，并Promise化）
 
 点击返回之后，直接返回到上一页。
 
@@ -316,10 +316,10 @@ toast('加载失败，请重试');
 toast('加载成功', 'success');
 ```
 
-**<a id="linkTo">linkTo</a>(path: String, querys?: JSON | String, jumpType?: String)**: 跳转页面
+**<a id="linkTo">linkTo</a>(path: String, querys?: Object | String, jumpType?: String)**: 跳转页面
 
 - `path`: 默认页面放在`pages`目录，并且页面文件夹与页面同名，这时只需写文件名，否则请写全路径。
-- `querys`: 如果传入JSON则会处理为url查询字符串，如果传入String则作用同`jumpType`。
+- `querys`: 如果传入Object则会处理为url查询字符串，如果传入String则作用同`jumpType`。
 - `jumpType`: 跳转类型，支持`navigate`,`redirect`,`swithTab`,`reLaunch`，默认`navigate`,行为同`wx.navigateTo`。
 
 ```javascript

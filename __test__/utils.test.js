@@ -106,7 +106,7 @@ describe('removeEmptyValues', () => {
 });
 
 describe('clone', () => {
-  test('实现深拷贝类JSON数据的最简单版本，可以选择只拷贝某些键值', () => {
+  test('实现深拷贝JSON数据的最简单版本，可以选择只拷贝某些键值', () => {
     expect(clone({ a: 1, b: '', c: null, d: false, e: undefined })).toEqual({ a: 1, b: '', c: null, d: false });
     expect(clone({ a: 1, b: '', c: null, d: false }, ['a', 'b', 'c'])).toEqual({ a: 1, b: "", c: null });
     expect(clone({ a: 1, b: '', c: null, d: x => x * x })).toEqual({ a: 1, b: "", c: null });
@@ -123,7 +123,7 @@ describe('capitalize', () => {
 });
 
 describe('toQueryString', () => {
-  test('转换类JSON对象为url查询字符串', () => {
+  test('转换纯对象为url查询字符串', () => {
     expect(toQueryString({ c: 1, b: '', d: null, a: false, f: undefined })).toBe('c=1&a=false');
     expect(toQueryString({ c: 1, b: '', d: null, a: false, f: '中文' }, true)).toBe('c=1&a=false&f=%E4%B8%AD%E6%96%87');
     expect(toQueryString({ c: 1, b: '', d: null, a: false, f: undefined }, false, true)).toBe('a=false&c=1');
