@@ -1,0 +1,6 @@
+.babelrc
+.editorconfig
+.eslintrc.js
+__test__
+coverage
+jest.config.js

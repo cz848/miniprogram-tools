@@ -10,7 +10,7 @@
 ## 安装与使用
 
 ```bash
-npm install cz848/miniprogram-tools
+npm install @tylerchao/miniprogram-tools
 ```
 
 ```javascript
@@ -23,9 +23,9 @@ import {
   getSystemInfo,
   linkTo,
   storage,
-} from 'miniprogram-tools';
+} from '@tylerchao/miniprogram-tools';
 
-import { isEmpty } from 'miniprogram-tools/utils';
+import { isEmpty } from '@tylerchao/miniprogram-tools/utils';
 ```
 
 ## API
