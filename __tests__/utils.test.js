@@ -156,7 +156,7 @@ describe('generateSignature', () => {
     const toThrowError = () => {
       generateSignature({ c: 1, b: 2 }, { encrypt: 'abcde' });
     }
-    expect(toThrowError).toThrow('Invalid encryption function');
+    expect(toThrowError).toThrow(Error);
   });
 });
 
@@ -177,13 +177,16 @@ describe('compareVersions', () => {
 });
 
 describe('sleep', () => {
+  test('等待500毫秒', () => {
+    return sleep(500).then(data => {
+      expect(data).toBe(undefined);
+    });
+  });
   test('等待1000毫秒', () => {
-    expect.assertions(1);
     return expect(sleep(1000)).resolves.toBe(undefined);
   });
   test('等待1500毫秒', async () => {
-    expect.assertions(1);
     const data = await sleep();
-    return expect(data).toBe(undefined);
+    expect(data).toBe(undefined);
   });
 });
