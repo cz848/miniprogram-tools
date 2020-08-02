@@ -1,6 +1,6 @@
 .babelrc
 .editorconfig
 .eslintrc.js
-__test__
+__tests__
 coverage
 jest.config.js
