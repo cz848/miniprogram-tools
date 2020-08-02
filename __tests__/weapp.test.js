@@ -1,6 +1,6 @@
 const path = require('path');
-const simulate = require('miniprogram-simulate');
-const mock = require('./mock');
+require('miniprogram-simulate');
+require('./mock');
 const {
   promisify,
   mp,
@@ -14,29 +14,6 @@ const {
   getSystemInfo,
 } = require('../weapp');
 const { sleep } = require('../utils');
-
-test('component', () => {
-  // 加载自定义组件，返回组件 id
-  const id = simulate.load(path.join(__dirname, './components/test/test'));
-  // 使用 id 渲染自定义组件，返回组件封装实例
-  const comp = simulate.render(id);
-
-  // 创建容器节点
-  const parent = document.createElement('parent-wrapper');
-  // 将组件插入到容器节点中，会触发 attached 生命周期
-  comp.attach(parent);
-  // 触发组件的 ready 生命周期
-  comp.triggerLifeTime('ready');
-
-  // 获取符合给定匹配串的第一个节点
-  const view = comp.querySelector('.container');
-
-  expect(view.dom.innerHTML).toBe('index.properties'); // 测试渲染结果
-  expect(window.getComputedStyle(view.dom).padding).toBe('20px'); // 测试渲染结果
-
-  // 将组件从容器节点中移除，会触发 detached 生命周期
-  comp.detach();
-});
 
 test('promisify', async () => {
   const wxLogin = ({ success, fail }) => {
@@ -59,7 +36,7 @@ test('mp', async () => {
   mp.add();
   mp.add(['getSystemInfo']);
 
-  expect(mp.apiList).toEqual(['showModal', 'showToast', 'request', 'login', 'getSystemInfo']);
+  expect(mp.apiList).toEqual(['showModal', 'showToast', 'request', 'getSystemInfo']);
 
   const res = await mp.getSystemInfo().catch(e => e);
   expect(res).toEqual(expect.any(Object));
