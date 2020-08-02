@@ -1,5 +1,5 @@
 import config from './config';
-import { toQueryString, compareVersions } from './utils';
+import { isPlainObject, toQueryString, compareVersions } from './utils';
 
 // 小程序api Promise化
 const promisify = (api = () => {}) => options => new Promise((resolve, reject) => api({
@@ -131,29 +131,28 @@ const formatPath = path => {
  *   type,
  * }, 'reLaunch');
  */
-const linkTo = (path, querys, jumpType = 'navigate') => {
-  let params = querys;
+const linkTo = (path, query, jumpType = 'navigate') => {
+  let params = query;
   let openType = jumpType;
   if (params && typeof params === 'string') {
     params = undefined;
-    openType = querys;
+    openType = query;
   }
   let url = formatPath(path);
+  url += isPlainObject(params) ? (url.indexOf('?') > 0 ? '&' : '?') + toQueryString(params) : '';
   const pages = getCurrentPages();
   const len = pages.length;
   if (len > 1 && pages[len - 2] && pages[len - 2].route === url) {
     wx.navigateBack();
     return;
   }
-  const query = typeof params === 'object' ? (url.indexOf('?') > 0 ? '&' : '?') + toQueryString(params) : '';
-  url = `/${url}${query}`;
   if (['navigate', 'redirect'].includes(openType)) {
     openType += 'To';
   }
   if (openType === 'navigateTo' && len >= 10) {
     openType = 'redirectTo';
   }
-  wx[openType]({ url });
+  wx[openType]({ url: `/${url}` });
 };
 
 // 获取所有系统参数并加入几个有用的字段
