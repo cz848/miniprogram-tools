@@ -320,7 +320,9 @@ toast('加载成功', 'success');
 
 - `path`: 默认页面放在`pages`目录，并且页面文件夹与页面同名，这时只需写文件名，否则请写全路径。
 - `querys`: 如果传入Object则会处理为url查询字符串，如果传入String则作用同`jumpType`。
-- `jumpType`: 跳转类型，支持`navigate`,`redirect`,`swithTab`,`reLaunch`，默认`navigate`,行为同`wx.navigateTo`。
+- `jumpType`: 跳转方式，支持`navigate/navigateTo`,`redirect/redirectTo`,`swithTab`,`reLaunch`，默认为`navigateTo`跳转方式。
+- 注：如果要跳转的页面和上一个页面相同，则回退到上一页。
+- 注：如果页面栈中的页面超过10个，会自动转为`redirectTo`跳转方式。
 
 ```javascript
 linkTo('index');
