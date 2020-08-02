@@ -40,7 +40,7 @@ describe('isPlainObject', () => {
     expect(isPlainObject('abcde')).toBe(false);
     expect(isPlainObject(100)).toBe(false);
     expect(isPlainObject(Object)).toBe(false);
-    expect(isPlainObject(new Date)).toBe(false);
+    expect(isPlainObject(new Date())).toBe(false);
     expect(isPlainObject(Function)).toBe(false);
     expect(isPlainObject(RegExp)).toBe(false);
     expect(isPlainObject(new Set([0]))).toBe(false);
@@ -108,8 +108,8 @@ describe('removeEmptyValues', () => {
 describe('clone', () => {
   test('实现深拷贝JSON数据的最简单版本，可以选择只拷贝某些键值', () => {
     expect(clone({ a: 1, b: '', c: null, d: false, e: undefined })).toEqual({ a: 1, b: '', c: null, d: false });
-    expect(clone({ a: 1, b: '', c: null, d: false }, ['a', 'b', 'c'])).toEqual({ a: 1, b: "", c: null });
-    expect(clone({ a: 1, b: '', c: null, d: x => x * x })).toEqual({ a: 1, b: "", c: null });
+    expect(clone({ a: 1, b: '', c: null, d: false }, ['a', 'b', 'c'])).toEqual({ a: 1, b: '', c: null });
+    expect(clone({ a: 1, b: '', c: null, d: x => x * x })).toEqual({ a: 1, b: '', c: null });
   });
 });
 
@@ -155,7 +155,7 @@ describe('generateSignature', () => {
   test('encrypt抛出异常', () => {
     const toThrowError = () => {
       generateSignature({ c: 1, b: 2 }, { encrypt: 'abcde' });
-    }
+    };
     expect(toThrowError).toThrow(Error);
   });
 });
@@ -177,14 +177,10 @@ describe('compareVersions', () => {
 });
 
 describe('sleep', () => {
-  test('等待500毫秒', () => {
-    return sleep(500).then(data => {
-      expect(data).toBe(undefined);
-    });
-  });
-  test('等待1000毫秒', () => {
-    return expect(sleep(1000)).resolves.toBe(undefined);
-  });
+  test('等待500毫秒', () => sleep(500).then(data => {
+    expect(data).toBe(undefined);
+  }));
+  test('等待1000毫秒', () => expect(sleep(1000)).resolves.toBe(undefined));
   test('等待1500毫秒', async () => {
     const data = await sleep();
     expect(data).toBe(undefined);

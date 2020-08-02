@@ -1,3 +1,1 @@
-<view class="container">
-  Component test
-</view>
+<view class="container">{{prop}}</view>
