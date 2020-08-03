@@ -12,7 +12,12 @@ module.exports = {
     'airbnb-base',
     // promise 推荐规则
     'plugin:promise/recommended',
+    'plugin:jest/recommended',
   ],
+  plugins: ['jest'],
+  env: {
+    'jest/globals': true,
+  },
   globals: {
     // for 小程序全局变量
     App: true,

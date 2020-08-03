@@ -1,4 +1,3 @@
-const path = require('path');
 require('miniprogram-simulate');
 require('./mock');
 const {
@@ -20,16 +19,12 @@ test('promisify', async () => {
     setTimeout(() => wx.login({ success, fail }), 300);
   };
 
-  return promisify(wxLogin)().then(data => {
-    expect(data).toMatchObject({
-      code: expect.any(String),
-      errMsg: expect.any(String),
-    });
-  }).catch(err => {
-    expect(err).toMatchObject({
-      errMsg: expect.any(String),
-    });
-  });
+  return promisify(wxLogin)().then(data => expect(data).toMatchObject({
+    code: expect.any(String),
+    errMsg: expect.any(String),
+  })).catch(err => expect(err).toMatchObject({
+    errMsg: expect.any(String),
+  }));
 });
 
 test('mp', async () => {
@@ -96,12 +91,12 @@ test('storage', async () => {
 
 test('alert', () => {
   expect(alert('搞错了吧')).toEqual(expect.any(Promise));
-  return expect(alert('搞错了吧')).resolves.toEqual({errMsg: expect.stringMatching(/ok$/)});
+  return expect(alert('搞错了吧')).resolves.toEqual({ errMsg: expect.stringMatching(/ok$/) });
 });
 
 test('confirm', () => {
   expect(confirm('有没有搞错')).toEqual(expect.any(Promise));
-  return expect(confirm('有没有搞错')).resolves.toEqual({errMsg: expect.stringMatching(/ok$/)});
+  return expect(confirm('有没有搞错')).resolves.toEqual({ errMsg: expect.stringMatching(/ok$/) });
 });
 
 test('block', () => {
@@ -112,40 +107,81 @@ test('block', () => {
 test('toast', () => {
   expect(toast('huuuuurrah')).toEqual(expect.any(Promise));
   setCurrentPages(pageStack);
-  return expect(toast('huuuuurrah')).resolves.toEqual({errMsg: expect.stringMatching(/ok$/)});
+  return expect(toast('huuuuurrah')).resolves.toEqual({ errMsg: expect.stringMatching(/ok$/) });
 });
 
 test('linkTo', () => {
   setCurrentPages(pageStack);
   expect(getPage().route).toMatch(/list/);
+  expect(getCurrentPages()).toHaveLength(2);
 
   linkTo('index');
-  expect(getPage().route).toMatch(/index/);
-  expect(getCurrentPages().length).toEqual(1);
+  expect(getPage().route).toMatch(/^pages\/index\/index/);
+  expect(getCurrentPages()).toHaveLength(3);
 
   linkTo('product');
   linkTo('detail');
   linkTo('index', 'redirect');
   expect(getPage().route).toMatch(/index/);
-  expect(getCurrentPages().length).toEqual(3);
+  expect(getCurrentPages()).toHaveLength(5);
 
-  linkTo('index', {a: 1, b: 2}, 'redirect');
-  expect(getPage().route).toMatch(/index/);
-  expect(getPage().query).toEqual({a: 1, b: 2});
+  linkTo('shop');
+  linkTo('order');
+  linkTo('cart');
+  linkTo('order');
+  linkTo('order-confirm');
+  expect(getCurrentPages()).toHaveLength(10);
+  linkTo('order-list');
+  expect(getCurrentPages()).toHaveLength(10);
+  linkTo('order-detail');
+  expect(getCurrentPages()).toHaveLength(10);
 
   linkTo('index', 'reLaunch');
   expect(getPage().route).toMatch(/index/);
-  expect(getCurrentPages().length).toEqual(1);
+  expect(getCurrentPages()).toHaveLength(1);
+
+  linkTo('index', { a: 1, b: 2 }, 'redirect');
+  expect(getPage().route).toMatch(/index/);
+  expect(getPage().query).toEqual({ a: 1, b: 2 });
+
+  linkTo('pages/list/index', 'navigate');
+  expect(getPage().route).toMatch(/^pages\/list\/index/);
+  expect(getCurrentPages()).toHaveLength(2);
 
   linkTo('/common/fail/fail');
   expect(getPage().route).toMatch(/fail/);
-  expect(getCurrentPages().length).toEqual(2);
+  expect(getCurrentPages()).toHaveLength(3);
+
+  linkTo('fail/fail');
+  expect(getPage().route).toMatch(/^pages\/fail\/fail/);
+
+  linkTo('index?bingo=1', { a: 1, b: { c: 3, d: 4 } });
+  expect(getPage().route).toMatch(/^pages\/index\/index/);
+  expect(getPage().query).toEqual({ a: 1, b: '{"c":3,"d":4}', bingo: 1 });
 });
 
 test('getSystemInfo', () => {
+  expect.extend({
+    toBeSomeValue(received, ...args) {
+      const pass = args.includes(received);
+      if (pass) {
+        return {
+          message: () => `expected ${received} not to be some value of ${args}`,
+          pass: true,
+        };
+      } else {
+        return {
+          message: () => `expected ${received} to be some value of ${args}`,
+          pass: false,
+        };
+      }
+    },
+  });
   expect(getSystemInfo()).toMatchObject({
-    titleBarHeight: expect.any(Number),
+    titleBarHeight: expect.toBeSomeValue(44, 48),
     pxRatio: expect.any(Number),
-    systemName: expect.any(String),
+    systemName: expect.toBeSomeValue('android', 'ios'),
+    isIPhoneX: expect.any(Boolean),
+    brand: expect.any(String),
   });
 });
