@@ -111,12 +111,12 @@ const toast = (title, icon = 'none') => {
   return mp.showToast({ title, icon });
 };
 
-// 把传入的路径转成标准的'pages/index/index'形式，只支持一级目录
+// 把传入的路径转成标准的'/pages/index/index'形式，只支持一级目录
 const formatPath = path => {
   let url = String(path).replace(/^(?:\/?pages|\/[^/]+)?\//, '');
   const keys = url.match(/^((?:[^/]+\/)*)([^/?]+)(\?.*)?$/);
   if (keys && !keys[1]) url = `${keys[2]}/${keys[2]}${keys[3] || ''}`;
-  const prefix = path.startsWith('/') ? path.split('/')[1] : 'pages';
+  const prefix = path.startsWith('/') ? path : '/pages';
   return `${prefix}/${url}`;
 };
 
@@ -126,33 +126,29 @@ const formatPath = path => {
  * linkTo('index'); // 不带路径的
  * linkTo('index', 'redirect');
  * linkTo('/common/fail/fail');
+ * linkTo('page/fail/fail');
  * linkTo('coupon', {
  *   id: 1,
  *   type,
  * }, 'reLaunch');
  */
-const linkTo = (path, query, jumpType = 'navigate') => {
+const linkTo = (path, query, openType = 'navigateTo') => {
   let params = query;
-  let openType = jumpType;
+  let jumpType = openType;
   if (params && typeof params === 'string') {
     params = undefined;
-    openType = query;
+    jumpType = query;
+  }
+  if (['navigate', 'redirect'].includes(jumpType)) {
+    jumpType += 'To';
+  }
+  const { length } = getCurrentPages();
+  if (jumpType === 'navigateTo' && length >= 10) {
+    jumpType = 'redirectTo';
   }
   let url = formatPath(path);
   url += isPlainObject(params) ? (url.indexOf('?') > 0 ? '&' : '?') + toQueryString(params) : '';
-  const pages = getCurrentPages();
-  const len = pages.length;
-  if (len > 1 && pages[len - 2] && pages[len - 2].route === url) {
-    wx.navigateBack();
-    return;
-  }
-  if (['navigate', 'redirect'].includes(openType)) {
-    openType += 'To';
-  }
-  if (openType === 'navigateTo' && len >= 10) {
-    openType = 'redirectTo';
-  }
-  wx[openType]({ url: `/${url}` });
+  wx[jumpType]({ url });
 };
 
 // 获取所有系统参数并加入几个有用的字段
@@ -162,17 +158,17 @@ const getSystemInfo = () => {
     system,
     screenWidth,
     model,
-    platform,
   } = sysInfo;
   // getMenuButtonBoundingClientRect有兼容问题，暂时舍弃
   // 默认iOS为44px，安卓则为48px
-  const height = platform.toLowerCase().includes('android') ? 48 : 44;
+  const systemName = system.split(' ')[0].toLowerCase();
+  const titleBarHeight = systemName.includes('android') ? 48 : 44;
   return {
     ...sysInfo,
-    titleBarHeight: height,
+    titleBarHeight,
+    systemName,
     // 根据屏幕宽度计算像素比率
     pxRatio: screenWidth / 750,
-    systemName: system.split(' ')[0].toLowerCase(),
     isIPhoneX: !!model.match(/^iPhone ?(?:X|12)/),
   };
 };

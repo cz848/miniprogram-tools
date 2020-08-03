@@ -177,9 +177,7 @@ describe('compareVersions', () => {
 });
 
 describe('sleep', () => {
-  test('等待500毫秒', () => sleep(500).then(data => {
-    expect(data).toBe(undefined);
-  }));
+  test('等待500毫秒', () => sleep(500).then(data => expect(data).toBe(undefined)));
   test('等待1000毫秒', () => expect(sleep(1000)).resolves.toBe(undefined));
   test('等待1500毫秒', async () => {
     const data = await sleep();

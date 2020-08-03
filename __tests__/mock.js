@@ -1,7 +1,9 @@
 let pageStack = [];
 
 global.getCurrentPages = () => pageStack;
-global.setCurrentPages = stack => pageStack = stack;
+global.setCurrentPages = stack => {
+  pageStack = stack;
+};
 
 wx.version = { version: '2.8.2' };
 
@@ -35,7 +37,8 @@ const jump = (type, { url = '', success = () => {}, fail = () => {} }) => {
   if (type === 'navigateTo') {
     setCurrentPages(pages.concat(newPage));
   } else if (type === 'redirectTo') {
-    setCurrentPages(pages.slice(0, pages.length - 1).concat(newPage));
+    pages[pages.length - 1] = newPage;
+    setCurrentPages(pages);
   } else if (type === 'reLaunch') {
     setCurrentPages([newPage]);
   } else if (type === 'switchTab') {

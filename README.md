@@ -25,7 +25,7 @@ import {
   storage,
 } from '@tylerchao/miniprogram-tools';
 
-import { isEmpty } from '@tylerchao/miniprogram-tools/utils';
+import { isEmpty, isPlainObject } from '@tylerchao/miniprogram-tools/utils';
 ```
 
 ## API
@@ -316,17 +316,17 @@ toast('加载失败，请重试');
 toast('加载成功', 'success');
 ```
 
-**<a id="linkTo">linkTo</a>(path: String, querys?: Object | String, jumpType?: String)**: 跳转页面
+**<a id="linkTo">linkTo</a>(path: String, query?: Object | String, openType?: String)**: 跳转页面
 
-- `path`: 默认页面放在`pages`目录，并且页面文件夹与页面同名，这时只需写文件名，否则请写全路径。
-- `querys`: 如果传入Object则会处理为url查询字符串，如果传入String则作用同`jumpType`。
-- `jumpType`: 跳转方式，支持`navigate/navigateTo`,`redirect/redirectTo`,`swithTab`,`reLaunch`，默认为`navigateTo`跳转方式。
-- 注：如果要跳转的页面和上一个页面相同，则回退到上一页。
+- `path`: 默认为页面放在`pages`目录，并且页面文件夹与页面同名，这时只需写文件名，否则请写绝对路径。
+- `query`: 如果传入Object则会处理为url查询字符串，如果传入String则作用同`jumpType`。
+- `openType`: 跳转方式，支持`navigate/navigateTo`,`redirect/redirectTo`,`swithTab`,`reLaunch`，默认为`navigateTo`跳转方式。
 - 注：如果页面栈中的页面超过10个，会自动转为`redirectTo`跳转方式。
 
 ```javascript
-linkTo('index');
+linkTo('index'); // 默认不需要带路径
 linkTo('index', 'redirect');
+linkTo('pages/fail/fail');
 linkTo('/common/fail/fail');
 linkTo('coupon', {
   id: 1,
@@ -337,6 +337,6 @@ linkTo('coupon', {
 **<a id="getSystemInfo">getSystemInfo</a>**: 获取所有系统参数（同`wx.getSystemInfoSync`），并加入几个有用的字段，如下：
 
 - `titleBarHeight`: 标题栏高度
+- `systemName`: 当前系统的名字，全小写
 - `pxRatio`: 根据屏幕宽度计算得到的px比率
-- `systemName`: 当前系统的名字
 - `isIPhoneX`: 是否为iPhoneX以上机型
