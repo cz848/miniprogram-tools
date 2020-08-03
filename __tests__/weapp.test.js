@@ -83,9 +83,14 @@ test('storage', async () => {
   expect(storage('user', null, true)).toBe(undefined);
 
   storage('user', 'somebody');
-  expect(storage('user')).toEqual(expect.anything());
+  expect(storage('user')).toEqual('somebody');
   storage.updatePrefix('some_prefix_');
   expect(storage.prefix).toEqual('some_prefix_');
+  expect(storage('user')).toBe(undefined);
+
+  storage('user', 'value');
+  expect(storage('user')).toEqual('value');
+  storage('user', 'value', -1);
   expect(storage('user')).toBe(undefined);
 });
 
