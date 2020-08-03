@@ -224,13 +224,13 @@ console.log(res);
 **<a id="mp">mp</a>**: 小程序wx对象经Promise化后的对象，项目中使用到的以wx开头的api需要在使用到的地方调用`mp.addApis`方法先定义，也可以统一在一个地方定义，请按需配置
 **注：**小程序基础库2.10.2以上部分异步api支持promise调用方式，此时返回原生的promise。
 
-**mp.apiList**: 查询已被mp对象promisify过的wx api，可以知道有哪些API已被定义;
+**mp.apiList**: 查询已被mp对象Promise化过的wx api，可以知道有哪些API已被定义;
 
 ```javascript
 console.log(mp.apiList);
 ```
 
-**mp.add(apiList: Array)**: 按需添加需要Promisify化的wx api，或在`app.js`中统一添加小程序中用到的wx api。
+**mp.add(apiList: Array)**: 按需添加需要Promise化的wx api，或在`app.js`中统一添加小程序中用到的wx api。
 
 ```javascript
 mp.add(['login', 'getLocation']);
