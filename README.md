@@ -25,13 +25,15 @@ import {
   storage,
 } from '@tylerchao/miniprogram-tools';
 
+// or
 import { isEmpty, isPlainObject } from '@tylerchao/miniprogram-tools/utils';
+import { mp, storage } from '@tylerchao/miniprogram-tools/weapp';
 ```
 
 ## API
 
-- [config.js](#config)
-- utils.js
+- [Config](#config)
+- Utils
   + [isPlainObject](#isPlainObject)
   + [isEmptyObject](#isEmptyObject)
   + [isEmptyArray](#isEmptyArray)
@@ -44,7 +46,7 @@ import { isEmpty, isPlainObject } from '@tylerchao/miniprogram-tools/utils';
   + [generateSignature](#generateSignature)
   + [compareVersions](#compareVersions)
   + [sleep](#sleep)
-- weapp.js
+- Weapp
   + [promisify](#promisify)
   + [mp](#mp)
   + [getPage](#getPage)
@@ -56,7 +58,7 @@ import { isEmpty, isPlainObject } from '@tylerchao/miniprogram-tools/utils';
   + [linkTo](#linkTo)
   + [getSystemInfo](#getSystemInfo)
 
-### <a id="config">config.js</a>:
+### <a id="config">Config</a>:
 
 **PREFIX**: storage存储键需要的前缀，除非小程序不支持getAccountInfoSync(基础库v2.2.2以下)，否则不需要自定义，如有特殊需求，按以下方式更新：
 
@@ -70,7 +72,7 @@ storage.updatePrefix(PREFIX: String);
 mp.add(apiList: Array);
 ```
 
-### utils.js
+### Utils
 
 **<a id="isPlainObject">isPlainObject</a>(input: any)**: 判断是否为键值对形式的纯对象
 
@@ -205,7 +207,7 @@ compareVersions('v2.10.1-alpha.2', '>=', '2.10.1-beta.1') === true
 })();
 ```
 
-### weapp.js
+### Weapp
 
 **<a id="promisify">promisify</a>**: 任何类似wx开头的api，以`success`和`fail`作为回调的函数，都可以用此方式Promise化。
 
