@@ -19,14 +19,14 @@ describe('promisify', () => {
     setTimeout(() => wx.login({ success, fail }), 200);
   };
 
-  test('把wx api或符合success/fail回调的方法Promise化', () => {
-    return promisify(wxLogin)().then(data => expect(data).toMatchObject({
+  test('把wx api或符合success/fail回调的方法Promise化', () => promisify(wxLogin)()
+    .then(data => expect(data).toMatchObject({
       code: expect.any(String),
       errMsg: expect.any(String),
-    })).catch(err => expect(err).toMatchObject({
+    }))
+    .catch(err => expect(err).toMatchObject({
       errMsg: expect.any(String),
-    }));
-  });
+    })));
 
   test('async/await调用', async () => {
     const res = await promisify(wxLogin)().catch(e => e);
@@ -87,7 +87,7 @@ describe('getPage', () => {
 
 describe('storage', () => {
   test('存数据', () => {
-    const prefix = storage.prefix;
+    const { prefix } = storage;
     const key = 'abcde';
     let value = '12345';
     storage(key, value);
@@ -99,7 +99,7 @@ describe('storage', () => {
   });
 
   test('取数据', () => {
-    const prefix = storage.prefix;
+    const { prefix } = storage;
     const key = 'abcde';
     const value = { a: 1, b: 2, c: 3, d: 4, e: 5 };
     expect(storage(key)).toEqual(value);
@@ -155,9 +155,45 @@ describe('showModal/showToast', () => {
     return expect(alert('搞错了吧')).resolves.toEqual({ errMsg: expect.stringMatching(/ok$/) });
   });
 
+  test('alert with options', () => {
+    expect(alert('请开启授权', {
+      title: '提醒',
+      success: wx.openSetting,
+    })).toEqual(expect.any(Promise));
+
+    alert('请开启授权', {
+      title: '提醒',
+      success(res) {
+        expect(res).toEqual({ errMsg: expect.stringMatching(/ok$/) });
+      },
+      fail(err) {
+        expect(err).toEqual({ errMsg: expect.stringMatching(/fail$/) });
+      },
+    });
+  });
+
   test('confirm', () => {
     expect(confirm('有没有搞错')).toEqual(expect.any(Promise));
     return expect(confirm('有没有搞错')).resolves.toEqual({ errMsg: expect.stringMatching(/ok$/) });
+  });
+
+  test('confirm with options', () => {
+    expect(confirm('请打开设置页开启授权', {
+      confirmText: '打开',
+      success(res) {
+        if (res.confirm) wx.openSetting();
+      },
+    })).toEqual(expect.any(Promise));
+
+    confirm('请打开设置页开启授权', {
+      confirmText: '打开',
+      success(res) {
+        expect(res).toEqual({ errMsg: expect.stringMatching(/ok$/) });
+      },
+      fail(err) {
+        expect(err).toEqual({ errMsg: expect.stringMatching(/fail$/) });
+      },
+    });
   });
 
   test('block', () => {
@@ -166,7 +202,7 @@ describe('showModal/showToast', () => {
   });
 
   test('toast', () => {
-    linkTo('index', 'reLaunch');
+    setCurrentPages();
     expect(toast('huuuuurrah')).toEqual(expect.any(Promise));
     setCurrentPages(pageStack);
     return expect(toast('huuuuurrah')).resolves.toEqual({ errMsg: expect.stringMatching(/ok$/) });
@@ -246,12 +282,11 @@ describe('getSystemInfo', () => {
           message: () => `expected ${received} not to be some value of ${args}`,
           pass: true,
         };
-      } else {
-        return {
-          message: () => `expected ${received} to be some value of ${args}`,
-          pass: false,
-        };
       }
+      return {
+        message: () => `expected ${received} to be some value of ${args}`,
+        pass: false,
+      };
     },
   });
 

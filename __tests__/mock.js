@@ -34,15 +34,13 @@ const jump = (type, { url = '', delta = 1, success = () => {}, fail = () => {} }
   };
 
   if (type === 'navigateTo') {
-    pages.push(newPage)
+    pages.push(newPage);
   } else if (type === 'redirectTo') {
-    // pages.pop();
-    // pages.push(newPage);
     pages[pages.length - 1] = newPage;
   } else if (type === 'reLaunch' || type === 'switchTab') {
     pages = [newPage];
   } else if (type === 'navigateBack') {
-    pages.pop();
+    pages.splice(0, pages.length - delta);
   }
   setCurrentPages(pages);
   success({
