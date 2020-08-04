@@ -285,6 +285,11 @@ storage.updatePrefix(appid + env);
 ```javascript
 alert('警告：');
 await alert('警告：');
+
+alert('请开启授权', {
+  title: '提醒',
+  success: wx.openSetting,
+});
 ```
 
 **<a id="confirm">confirm</a>(content: String, options?: Object)**: 确认对话框（对模态对话框的进一步封装，并Promise化）
@@ -297,6 +302,13 @@ const res = await confirm('警告：');
 if (res.confirm) {
   ...
 }
+
+confirm('请打开设置页开启授权', {
+  confirmText: '打开',
+  success(res) {
+    if (res.confirm) wx.openSetting();
+  },
+});
 ```
 
 **<a id="block">block</a>(content: String, options?: Object)**: 带返回的对话框（对模态对话框的进一步封装，并Promise化）
