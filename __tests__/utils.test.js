@@ -15,7 +15,7 @@ import {
 } from '../utils';
 
 describe('isPlainObject', () => {
-  test('纯对象', () => {
+  test('纯对象的情况', () => {
     expect(isPlainObject({})).toBe(true);
     expect(isPlainObject(Object.create({}))).toBe(true);
     expect(isPlainObject(Object.create(null))).toBe(true);
@@ -29,7 +29,7 @@ describe('isPlainObject', () => {
     expect(isPlainObject(new Object({}))).toBe(true);
   });
 
-  test('非纯对象', () => {
+  test('非纯对象的情况', () => {
     expect(isPlainObject(new Map([
       ['a', 1],
       ['b', 2],
@@ -48,11 +48,14 @@ describe('isPlainObject', () => {
 });
 
 describe('isEmptyObject', () => {
-  test('判断是否为"空纯对象"', () => {
+  test('为"空纯对象"的情况', () => {
     expect(isEmptyObject({})).toBe(true);
-    expect(isEmptyObject(Object)).toBe(false);
     expect(isEmptyObject(new Object())).toBe(true);
     expect(isEmptyObject(Object.create(null))).toBe(true);
+  });
+
+  test('非"空纯对象"的情况', () => {
+    expect(isEmptyObject(Object)).toBe(false);
     expect(isEmptyObject({ a: 1 })).toBe(false);
     expect(isEmptyObject([])).toBe(false);
     expect(isEmptyObject(x => x * x)).toBe(false);
@@ -75,15 +78,19 @@ describe('isEmptyArray', () => {
 });
 
 describe('isEmpty', () => {
-  test('判断是否为空值', () => {
+  test('为空值的情况', () => {
     expect(isEmpty('')).toBe(true);
     expect(isEmpty(null)).toBe(true);
     expect(isEmpty(undefined)).toBe(true);
     expect(isEmpty('undefined')).toBe(true);
-    expect(isEmpty(false)).toBe(false);
     expect(isEmpty([])).toBe(true);
     expect(isEmpty({})).toBe(true);
+
     expect(isEmpty(false, [false])).toBe(true);
+  });
+
+  test('非空值的情况', () => {
+    expect(isEmpty(false)).toBe(false);
     expect(isEmpty(null, [], [null])).toBe(false);
   });
 });
@@ -92,6 +99,11 @@ describe('getKeys', () => {
   test('过滤出对象中有值的键并返回包含这些键的数组', () => {
     expect(getKeys({ a: 1, b: '', c: null, d: false })).toEqual(['a', 'd']);
     expect(getKeys([0, 1, '', null, false, undefined])).toEqual(['0', '1', '4']);
+  });
+
+  test('值中又有对象的情况', () => {
+    expect(getKeys({ a: {}, b: '', c: null, d: false, e: [] })).toEqual(['d']);
+    expect(getKeys({ a: { a: null, b: {} }, b: '', c: null, d: false, e: [null, undefined] })).toEqual(['d']);
   });
 });
 
@@ -118,7 +130,15 @@ describe('capitalize', () => {
     expect(capitalize('abcde')).toBe('Abcde');
     expect(capitalize('123e')).toBe('123e');
     expect(capitalize('prefix', 'suffix')).toBe('suffixPrefix');
-    expect(capitalize()).toBe('');
+  });
+
+  test('传入非字符串类型', () => {
+    expect(capitalize(1234)).toBe(1234);
+    expect(capitalize()).toBe(undefined);
+    expect(capitalize(null)).toBe(null);
+    expect(capitalize(undefined)).toBe(undefined);
+    expect(capitalize(false)).toBe(false);
+    expect(capitalize({})).toEqual({});
   });
 });
 
@@ -166,10 +186,13 @@ describe('compareVersions', () => {
     expect(compareVersions('2.6.2', '<=', '2.6.9')).toBe(true);
     expect(compareVersions('2.5.0', '=', '2.4.9')).toBe(false);
     expect(compareVersions('2.4.9', '=', '2.4.9')).toBe(true);
+    expect(compareVersions('v2.10.1', '>', 'v2.9.1')).toBe(true);
     expect(compareVersions('2.4', '<', '2.4.9')).toBe(true);
     expect(compareVersions('2.4.3', '>', '2.4')).toBe(true);
     expect(compareVersions('2.4.3', '>')).toBe(true);
-    expect(compareVersions('v2.10.1', '>', 'v2.9.1')).toBe(true);
+  });
+
+  test('更特殊的版本号', () => {
     expect(compareVersions('v2.10.1-alpha.2', '>', '2.10.1-alpha.1')).toBe(true);
     expect(compareVersions('v2.10.1-alpha.2', '>', '2.10.1-beta.1')).toBe(true);
     expect(compareVersions('v2.10.1-alpha.2', '>=', '2.10.1-beta.1')).toBe(true);
