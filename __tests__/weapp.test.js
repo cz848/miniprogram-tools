@@ -1,7 +1,7 @@
-require('miniprogram-simulate');
-require('./mock');
-const config = require('../config').default;
-const {
+import 'miniprogram-simulate';
+import './mock';
+import config from '../config';
+import {
   promisify,
   mp,
   getPage,
@@ -12,8 +12,8 @@ const {
   toast,
   linkTo,
   getSystemInfo,
-} = require('../weapp');
-const { sleep } = require('../utils');
+} from '../weapp';
+import { sleep } from '../utils';
 
 describe('promisify', () => {
   const wxLogin = ({ success, fail }) => {
