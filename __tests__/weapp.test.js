@@ -1,5 +1,6 @@
 require('miniprogram-simulate');
 require('./mock');
+const config = require('../config').default;
 const {
   promisify,
   mp,
@@ -87,7 +88,7 @@ describe('getPage', () => {
 
 describe('storage', () => {
   test('存数据', () => {
-    const { prefix } = storage;
+    const prefix = config.PREFIX;
     const key = 'abcde';
     let value = '12345';
     storage(key, value);
@@ -99,7 +100,7 @@ describe('storage', () => {
   });
 
   test('取数据', () => {
-    const { prefix } = storage;
+    const prefix = config.PREFIX;
     const key = 'abcde';
     const value = { a: 1, b: 2, c: 3, d: 4, e: 5 };
     expect(storage(key)).toEqual(value);
@@ -120,11 +121,20 @@ describe('storage', () => {
   });
 
   test('update prefix', () => {
-    storage('user', 'somebody');
-    expect(storage.prefix).toEqual(expect.any(String));
-    storage.updatePrefix('some_prefix_');
-    expect(storage.prefix).toEqual('some_prefix_');
-    expect(storage('user')).toBe(undefined);
+    let prefix = config.PREFIX;
+    const key = 'user';
+    expect(prefix).toEqual(expect.any(String));
+    storage(key, 'somebody');
+    expect(storage(key)).toEqual(wx.getStorageSync(prefix + key).value);
+
+    prefix = 'some_prefix_';
+    storage.updatePrefix(prefix);
+    expect(storage(key)).toBe(undefined);
+    storage(key, 'somebody');
+    expect(storage(key)).toEqual(wx.getStorageSync(prefix + key).value);
+
+    storage.updatePrefix();
+    expect(storage(key)).toBe('somebody');
   });
 
   test('delete storage', () => {

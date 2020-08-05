@@ -125,7 +125,8 @@ isEmpty(null, [], [null]) // false
 **<a id="getKeys">getKeys</a>(input: Object | Array)**: 过滤出对象或数组中有值的键并返回包含这些键的数组
 
 ```javascript
-getKeys({ a: 1, b: '', c: null, d: false }) // ["a", "d"]
+getKeys({ a: 1, b: '', c: null, d: false }) // ['a', 'd']
+getKeys({ a: { a: null, b: {} }, b: '', c: null, d: false, e: [null, undefined] }) // ['d']
 ```
 
 **<a id="removeEmptyValues">removeEmptyValues</a>(input: Object | Array)**: 删除对象或数组中属性值为空值、空数组、空对象的键

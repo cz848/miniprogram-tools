@@ -30,9 +30,12 @@ const isEmpty = (the, inclusions = [], exclusions = []) => {
 };
 
 // 过滤出有值的键并返回
-const getKeys = (data = {}) => Object.keys(data).filter(key => !isEmpty(data[key]));
+const getKeys = (data = {}) => Object.keys(data).filter(key => {
+  const value = data[key];
+  return !isEmpty(isPlainObject(value) || Array.isArray(value) ? getKeys(value) : value);
+});
 
-// 删掉array/json中属性值为空值、空数组、空对象的键
+// 删掉array/object中属性值为空值、空数组、空对象的键
 const removeEmptyValues = (data = {}) => {
   const result = Object.keys(data).reduce((gather, key) => {
     const value = data[key];
@@ -51,8 +54,10 @@ const removeEmptyValues = (data = {}) => {
 // 实现深拷贝类json对象的最简单版本，可以选择只拷贝某些键值
 const clone = (json = {}, keys) => JSON.parse(JSON.stringify(json, keys));
 
-// 首字母大写
-const capitalize = (str = '', prefix = '') => `${prefix}${str.replace(/(^[a-z])/, $1 => $1.toUpperCase())}`;
+// 字符串首字母大写
+const capitalize = (string, prefix = '') => typeof string === 'string'
+  ? `${prefix}${string.replace(/(^[a-z])/, $1 => $1.toUpperCase())}`
+  : string;
 
 /**
  * parse json to url query string
@@ -66,14 +71,14 @@ const toQueryString = (json = {}, encode = false, sort = false) => {
   if (sort) params.sort();
   return params.reduce((gather, key) => {
     let value = json[key];
-    // 不处理空值
+    // 不处理所有空值
     if (isEmpty(value)) return gather;
     if (typeof value === 'object') value = JSON.stringify(value);
     return gather.concat(`${key}=${encode ? encodeURIComponent(value) : value}`);
   }, []).join('&');
 };
 
-// 生成签名算法，为了兼容考虑，需自定义通用参数及加密函数（sha256）
+// 生成签名算法，为了兼容考虑，需自定义通用参数及加密函数（sha256），这里有两种生成签名的方式
 const generateSignature = (params, { encrypt, isSorted = true, appKey = '', token = '', secret = '' }) => {
   if (typeof encrypt !== 'function') throw new Error('Invalid encryption function');
   let query;

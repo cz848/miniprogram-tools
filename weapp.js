@@ -49,10 +49,12 @@ const getPage = (previous = 0) => {
  * @example storage('key', 'value', 3600): write key and expires for 1 hour
  */
 
+let STORAGE_PREFIX = config.PREFIX;
+
 const storage = (name, value, expires) => {
   if (!name) return;
 
-  const key = storage.prefix + name;
+  const key = STORAGE_PREFIX + name;
   const now = Math.floor(Date.now() / 1000);
   const del = () => wx.removeStorageSync(key);
   const read = attr => {
@@ -82,11 +84,9 @@ const storage = (name, value, expires) => {
   write();
 };
 
-storage.updatePrefix = (prefix = config.PREFIX) => {
-  storage.prefix = prefix;
+storage.updatePrefix = prefix => {
+  if (prefix) STORAGE_PREFIX = prefix;
 };
-
-storage.updatePrefix();
 
 // 界面：模态对话框封装
 const modals = (content, showCancel, options) => mp.showModal({
