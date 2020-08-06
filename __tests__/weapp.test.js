@@ -24,22 +24,26 @@ describe('promisify', () => {
     .then(data => {
       expect(data).toMatchObject({
         code: expect.any(String),
-        errMsg: expect.any(String),
+        errMsg: expect.stringMatching(/ok$/),
       });
     })
     .catch(err => {
       expect(err).toMatchObject({
-        errMsg: expect.any(String),
+        errMsg: expect.stringMatching(/fail$/),
       });
     }));
 
   test('async/await调用', async () => {
     const res = await promisify(wxLogin)().catch(e => e);
     expect(res).toEqual(expect.any(Object));
-    expect(res).toMatchObject({
-      code: expect.any(String),
-      errMsg: expect.any(String),
-    });
+    const matchResult = {};
+    if (res.code) {
+      matchResult.errMsg = expect.stringMatching(/ok$/);
+      matchResult.code = expect.any(String);
+    } else {
+      matchResult.errMsg = expect.stringMatching(/fail$/);
+    }
+    expect(res).toMatchObject(matchResult);
   });
 });
 
@@ -55,27 +59,32 @@ describe('mp', () => {
     .then(data => {
       expect(data).toMatchObject({
         code: expect.any(String),
-        errMsg: expect.any(String),
+        errMsg: expect.stringMatching(/ok$/),
       });
     })
     .catch(err => {
       expect(err).toMatchObject({
-        errMsg: expect.any(String),
+        errMsg: expect.stringMatching(/fail$/),
       });
     }));
 
   test('async/await方式调用api', async () => {
     const res = await mp.getSystemInfo().catch(e => e);
     expect(res).toEqual(expect.any(Object));
-    expect(res).toMatchObject({
-      SDKVersion: expect.any(String),
-      batteryLevel: expect.any(Number),
-      brand: expect.any(String),
-      model: expect.any(String),
-      platform: expect.any(String),
-      statusBarHeight: expect.any(Number),
-      version: expect.any(String),
-    });
+    let matchResult = {};
+    if (res.errMsg.match(/ok$/)) {
+      matchResult = {
+        SDKVersion: expect.any(String),
+        batteryLevel: expect.any(Number),
+        brand: expect.any(String),
+        model: expect.any(String),
+        platform: expect.any(String),
+        statusBarHeight: expect.any(Number),
+      };
+    } else {
+      matchResult.errMsg = expect.stringMatching(/fail$/);
+    }
+    expect(res).toMatchObject(matchResult);
   });
 });
 
@@ -240,7 +249,7 @@ describe('showModal/showToast', () => {
 describe('linkTo', () => {
   test('first set', () => {
     setCurrentPages(pageStack);
-    expect(getPage().route).toMatch(/list/);
+    expect(getPage().route).toMatch('list');
     expect(getCurrentPages()).toHaveLength(2);
   });
 
@@ -303,26 +312,20 @@ describe('linkTo', () => {
 
 describe('getSystemInfo', () => {
   expect.extend({
-    toBeSomeValue(received, ...args) {
+    oneOf(received, ...args) {
       const pass = args.includes(received);
-      if (pass) {
-        return {
-          message: () => `expected ${received} not to be some value of ${args}`,
-          pass: true,
-        };
-      }
       return {
-        message: () => `expected ${received} to be some value of ${args}`,
-        pass: false,
+        pass,
+        message: () => `expected ${received} ${pass ? '' : 'not '}to be some value of ${args}`,
       };
     },
   });
 
   test('获取系统信息', () => {
     expect(getSystemInfo()).toMatchObject({
-      titleBarHeight: expect.toBeSomeValue(44, 48),
+      titleBarHeight: expect.oneOf(44, 48),
       pxRatio: expect.any(Number),
-      systemName: expect.toBeSomeValue('android', 'ios'),
+      systemName: expect.oneOf('android', 'ios'),
       isIPhoneX: expect.any(Boolean),
       brand: expect.any(String),
     });

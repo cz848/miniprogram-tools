@@ -17,13 +17,13 @@ import {
 describe('isPlainObject', () => {
   test('纯对象的情况', () => {
     expect(isPlainObject({})).toBe(true);
-    expect(isPlainObject(Object.create({}))).toBe(true);
-    expect(isPlainObject(Object.create(null))).toBe(true);
     expect(isPlainObject({
       a: 1,
       b: 2,
       c: x => x * x,
     })).toBe(true);
+    expect(isPlainObject(Object.create({}))).toBe(true);
+    expect(isPlainObject(Object.create(null))).toBe(true);
     expect(isPlainObject(new Object(null))).toBe(true);
     expect(isPlainObject(new Object(undefined))).toBe(true);
     expect(isPlainObject(new Object({}))).toBe(true);

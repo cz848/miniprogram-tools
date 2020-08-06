@@ -6,6 +6,7 @@ global.setCurrentPages = stack => {
 };
 
 wx.version = { version: '2.8.2' };
+// wx.getSystemInfo = ({ success = () => {}, fail = () => {} }) => fail({ errMsg: 'getSystemInfo:fail' });
 
 const toJSON = params => {
   if (!params) return {};
