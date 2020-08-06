@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint *.js",
-    "test": "jest",
+    "test": "jest --watchAll",
     "coverage": "open ./coverage/lcov-report/index.html"
   },
   "repository": {

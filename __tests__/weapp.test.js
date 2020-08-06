@@ -21,17 +21,21 @@ describe('promisify', () => {
   };
 
   test('把wx api或符合success/fail回调的方法Promise化', () => promisify(wxLogin)()
-    .then(data => expect(data).toMatchObject({
-      code: expect.any(String),
-      errMsg: expect.any(String),
-    }))
-    .catch(err => expect(err).toMatchObject({
-      errMsg: expect.any(String),
-    })));
+    .then(data => {
+      expect(data).toMatchObject({
+        code: expect.any(String),
+        errMsg: expect.any(String),
+      });
+    })
+    .catch(err => {
+      expect(err).toMatchObject({
+        errMsg: expect.any(String),
+      });
+    }));
 
   test('async/await调用', async () => {
     const res = await promisify(wxLogin)().catch(e => e);
-
+    expect(res).toEqual(expect.any(Object));
     expect(res).toMatchObject({
       code: expect.any(String),
       errMsg: expect.any(String),
@@ -42,11 +46,25 @@ describe('promisify', () => {
 describe('mp', () => {
   test('add api list', () => {
     mp.add();
-    mp.add(['getSystemInfo']);
-    expect(mp.apiList).toEqual(['showModal', 'showToast', 'request', 'getSystemInfo']);
+    mp.add(['login', 'getSystemInfo']);
+    expect(mp.apiList).toEqual(['showModal', 'showToast', 'request', 'login', 'getSystemInfo']);
+    expect(mp.apiList).toEqual(expect.arrayContaining(['login', 'getSystemInfo']));
   });
 
-  test('async/await调用api', async () => {
+  test('Promise方式调用api', () => mp.login()
+    .then(data => {
+      expect(data).toMatchObject({
+        code: expect.any(String),
+        errMsg: expect.any(String),
+      });
+    })
+    .catch(err => {
+      expect(err).toMatchObject({
+        errMsg: expect.any(String),
+      });
+    }));
+
+  test('async/await方式调用api', async () => {
     const res = await mp.getSystemInfo().catch(e => e);
     expect(res).toEqual(expect.any(Object));
     expect(res).toMatchObject({
