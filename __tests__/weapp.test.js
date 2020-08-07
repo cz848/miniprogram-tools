@@ -316,7 +316,7 @@ describe('getSystemInfo', () => {
       const pass = args.includes(received);
       return {
         pass,
-        message: () => `expected ${received} ${pass ? '' : 'not '}to be some value of ${args}`,
+        message: () => `expected ${received} is ${pass ? '' : 'not '}one of ${args}`,
       };
     },
   });
