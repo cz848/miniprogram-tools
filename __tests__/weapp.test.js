@@ -1,7 +1,7 @@
-require('miniprogram-simulate');
-require('./mock');
-const config = require('../config').default;
-const {
+import 'miniprogram-simulate';
+import './mock';
+import config from '../config';
+import {
   promisify,
   mp,
   getPage,
@@ -12,8 +12,8 @@ const {
   toast,
   linkTo,
   getSystemInfo,
-} = require('../weapp');
-const { sleep } = require('../utils');
+} from '../weapp';
+import { sleep } from '../utils';
 
 describe('promisify', () => {
   const wxLogin = ({ success, fail }) => {
@@ -21,43 +21,70 @@ describe('promisify', () => {
   };
 
   test('把wx api或符合success/fail回调的方法Promise化', () => promisify(wxLogin)()
-    .then(data => expect(data).toMatchObject({
-      code: expect.any(String),
-      errMsg: expect.any(String),
-    }))
-    .catch(err => expect(err).toMatchObject({
-      errMsg: expect.any(String),
-    })));
+    .then(data => {
+      expect(data).toMatchObject({
+        code: expect.any(String),
+        errMsg: expect.stringMatching(/ok$/),
+      });
+    })
+    .catch(err => {
+      expect(err).toMatchObject({
+        errMsg: expect.stringMatching(/fail$/),
+      });
+    }));
 
   test('async/await调用', async () => {
     const res = await promisify(wxLogin)().catch(e => e);
-
-    expect(res).toMatchObject({
-      code: expect.any(String),
-      errMsg: expect.any(String),
-    });
+    expect(res).toEqual(expect.any(Object));
+    const matchResult = {};
+    if (res.code) {
+      matchResult.errMsg = expect.stringMatching(/ok$/);
+      matchResult.code = expect.any(String);
+    } else {
+      matchResult.errMsg = expect.stringMatching(/fail$/);
+    }
+    expect(res).toMatchObject(matchResult);
   });
 });
 
 describe('mp', () => {
   test('add api list', () => {
     mp.add();
-    mp.add(['getSystemInfo']);
-    expect(mp.apiList).toEqual(['showModal', 'showToast', 'request', 'getSystemInfo']);
+    mp.add(['login', 'getSystemInfo']);
+    expect(mp.apiList).toEqual(['showModal', 'showToast', 'request', 'login', 'getSystemInfo']);
+    expect(mp.apiList).toEqual(expect.arrayContaining(['login', 'getSystemInfo']));
   });
 
-  test('async/await调用api', async () => {
+  test('Promise方式调用api', () => mp.login()
+    .then(data => {
+      expect(data).toMatchObject({
+        code: expect.any(String),
+        errMsg: expect.stringMatching(/ok$/),
+      });
+    })
+    .catch(err => {
+      expect(err).toMatchObject({
+        errMsg: expect.stringMatching(/fail$/),
+      });
+    }));
+
+  test('async/await方式调用api', async () => {
     const res = await mp.getSystemInfo().catch(e => e);
     expect(res).toEqual(expect.any(Object));
-    expect(res).toMatchObject({
-      SDKVersion: expect.any(String),
-      batteryLevel: expect.any(Number),
-      brand: expect.any(String),
-      model: expect.any(String),
-      platform: expect.any(String),
-      statusBarHeight: expect.any(Number),
-      version: expect.any(String),
-    });
+    let matchResult = {};
+    if (res.errMsg.match(/ok$/)) {
+      matchResult = {
+        SDKVersion: expect.any(String),
+        batteryLevel: expect.any(Number),
+        brand: expect.any(String),
+        model: expect.any(String),
+        platform: expect.any(String),
+        statusBarHeight: expect.any(Number),
+      };
+    } else {
+      matchResult.errMsg = expect.stringMatching(/fail$/);
+    }
+    expect(res).toMatchObject(matchResult);
   });
 });
 
@@ -222,19 +249,21 @@ describe('showModal/showToast', () => {
 describe('linkTo', () => {
   test('first set', () => {
     setCurrentPages(pageStack);
-    expect(getPage().route).toMatch(/list/);
+    expect(getPage().route).toMatch('list');
     expect(getCurrentPages()).toHaveLength(2);
   });
 
   test('navigateTo', () => {
     linkTo('index');
-    expect(getPage().route).toMatch(/^pages\/index\/index/);
+    expect(getPage().route).toEqual('pages/index/index');
     expect(getCurrentPages()).toHaveLength(3);
 
-    linkTo('product');
+    linkTo('/pages/product/product');
+    expect(getPage().route).toEqual('pages/product/product');
+    expect(getCurrentPages()).toHaveLength(4);
     linkTo('detail');
-    linkTo('index', 'redirect');
-    expect(getPage().route).toMatch(/index/);
+    linkTo('cart', 'redirect');
+    expect(getPage().route).toEqual('pages/cart/cart');
     expect(getCurrentPages()).toHaveLength(5);
   });
 
@@ -265,46 +294,50 @@ describe('linkTo', () => {
 
   test('非标准路径', () => {
     linkTo('pages/list/index', 'navigate');
-    expect(getPage().route).toMatch(/^pages\/list\/index/);
+    expect(getPage().route).toEqual('pages/list/index');
     expect(getCurrentPages()).toHaveLength(2);
 
     linkTo('/common/fail/fail');
-    expect(getPage().route).toMatch(/fail/);
+    expect(getPage().route).toEqual('common/fail/fail');
     expect(getCurrentPages()).toHaveLength(3);
 
-    linkTo('fail/fail');
-    expect(getPage().route).toMatch(/^pages\/fail\/fail/);
+    linkTo('fail/index');
+    expect(getPage().route).toEqual('pages/fail/index');
+
+    linkTo('?a=1');
+    expect(getPage().route).toEqual('pages/fail/index');
+
+    linkTo('pages/list');
+    expect(getPage().route).toEqual('pages/list/list');
   });
 
   test('with query string', () => {
     linkTo('index?bingo=1', { a: 1, b: { c: 3, d: 4 } });
     expect(getPage().route).toMatch(/^pages\/index\/index/);
     expect(getPage().query).toEqual({ a: 1, b: '{"c":3,"d":4}', bingo: 1 });
+
+    linkTo('pages/list?a=1');
+    expect(getPage().route).toEqual('pages/list/list');
+    expect(getPage().query).toEqual({ a: 1});
   });
 });
 
 describe('getSystemInfo', () => {
   expect.extend({
-    toBeSomeValue(received, ...args) {
+    oneOf(received, ...args) {
       const pass = args.includes(received);
-      if (pass) {
-        return {
-          message: () => `expected ${received} not to be some value of ${args}`,
-          pass: true,
-        };
-      }
       return {
-        message: () => `expected ${received} to be some value of ${args}`,
-        pass: false,
+        pass,
+        message: () => `expected ${received} is ${pass ? '' : 'not '}one of ${args}`,
       };
     },
   });
 
   test('获取系统信息', () => {
     expect(getSystemInfo()).toMatchObject({
-      titleBarHeight: expect.toBeSomeValue(44, 48),
+      titleBarHeight: expect.oneOf(44, 48),
       pxRatio: expect.any(Number),
-      systemName: expect.toBeSomeValue('android', 'ios'),
+      systemName: expect.oneOf('android', 'ios'),
       isIPhoneX: expect.any(Boolean),
       brand: expect.any(String),
     });

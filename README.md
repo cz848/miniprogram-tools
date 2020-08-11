@@ -339,10 +339,13 @@ toast('加载成功', 'success');
 - 注：如果页面栈中的页面超过10个，会自动转为`redirectTo`跳转方式。
 
 ```javascript
-linkTo('index'); // 默认不需要带路径
-linkTo('index', 'redirect');
-linkTo('pages/fail/fail');
-linkTo('/common/fail/fail');
+linkTo('index'); // 默认不需要带路径，会转成/pages/index/index
+linkTo('index', 'redirect'); // 同上
+linkTo('cart/index'); // => /pages/cart/index
+linkTo('pages/fail/fail'); // => /pages/fail/fail
+linkTo('pages/fail'); // => /pages/fail/fail
+linkTo('/common/fail/fail'); // 不在pages文件夹请写绝对路径
+linkTo('index?a=1'); // 可直接带路径参数
 linkTo('coupon', {
   id: 1,
   type,

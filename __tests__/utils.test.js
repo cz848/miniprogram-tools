@@ -17,13 +17,13 @@ import {
 describe('isPlainObject', () => {
   test('纯对象的情况', () => {
     expect(isPlainObject({})).toBe(true);
-    expect(isPlainObject(Object.create({}))).toBe(true);
-    expect(isPlainObject(Object.create(null))).toBe(true);
     expect(isPlainObject({
       a: 1,
       b: 2,
       c: x => x * x,
     })).toBe(true);
+    expect(isPlainObject(Object.create({}))).toBe(true);
+    expect(isPlainObject(Object.create(null))).toBe(true);
     expect(isPlainObject(new Object(null))).toBe(true);
     expect(isPlainObject(new Object(undefined))).toBe(true);
     expect(isPlainObject(new Object({}))).toBe(true);
@@ -35,15 +35,25 @@ describe('isPlainObject', () => {
       ['b', 2],
       ['c', x => x * x],
     ]))).toBe(false);
-    expect(isPlainObject('{}')).toBe(false);
     expect(isPlainObject([])).toBe(false);
-    expect(isPlainObject('abcde')).toBe(false);
-    expect(isPlainObject(100)).toBe(false);
     expect(isPlainObject(Object)).toBe(false);
+    expect(isPlainObject(Date)).toBe(false);
     expect(isPlainObject(new Date())).toBe(false);
     expect(isPlainObject(Function)).toBe(false);
     expect(isPlainObject(RegExp)).toBe(false);
     expect(isPlainObject(new Set([0]))).toBe(false);
+  });
+
+  test('非对象的情况', () => {
+    expect(isPlainObject()).toBe(false);
+    expect(isPlainObject('{}')).toBe(false);
+    expect(isPlainObject('abcde')).toBe(false);
+    expect(isPlainObject(100)).toBe(false);
+    expect(isPlainObject('')).toBe(false);
+    expect(isPlainObject(false)).toBe(false);
+    expect(isPlainObject(null)).toBe(false);
+    expect(isPlainObject(undefined)).toBe(false);
+    expect(isPlainObject(NaN)).toBe(false);
   });
 });
 
@@ -172,7 +182,7 @@ describe('generateSignature', () => {
     })).toBe('845d2c259e0db90d777a7209d6f24edfe270c6af7f097515fc8264c4c1878074');
   });
 
-  test('encrypt抛出异常', () => {
+  test('encrypt非函数', () => {
     const toThrowError = () => {
       generateSignature({ c: 1, b: 2 }, { encrypt: 'abcde' });
     };

@@ -112,12 +112,20 @@ const toast = (title, icon = 'none') => {
 };
 
 // 把传入的路径转成标准的'/pages/index/index'形式，只支持一级目录
+// index => /pages/index/index
+// product => /pages/product/product
+// demo/index => /pages/demo/index
+// pages/list/index => /pages/list/index
+// pages/list => /pages/list/list
+// /pages/list/index => /pages/list/index
+// /common/fail/fail => /common/fail/fail
+// ?a=1 => ?a=1
 const formatPath = path => {
-  let url = String(path).replace(/^(?:\/?pages|\/[^/]+)?\//, '');
-  const keys = url.match(/^((?:[^/]+\/)*)([^/?]+)(\?.*)?$/);
-  if (keys && !keys[1]) url = `${keys[2]}/${keys[2]}${keys[3] || ''}`;
-  const prefix = path.startsWith('/') ? path : '/pages';
-  return `${prefix}/${url}`;
+  if (!path || path.startsWith('/')) return path || '';
+  let url = String(path).replace(/^pages\//, '');
+  const keys = url.match(/^([^?]+)(\?.*)?$/);
+  if (!keys) return path;
+  return keys[1].includes('/') ? `/pages/${url}` : `/pages/${keys[1]}/${url}`;
 };
 
 /*
