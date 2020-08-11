@@ -19,7 +19,7 @@ const toJSON = params => {
 
 const jump = (type, { url = '', delta = 1, success = () => {}, fail = () => {} }) => {
   let pages = getCurrentPages();
-  if (type !== 'navigatorBack' && !url) {
+  if (type !== 'navigatorBack' && (!url || url.startsWith('?'))) {
     fail({
       errMsg: `${type}:fail`,
     });
@@ -35,6 +35,9 @@ const jump = (type, { url = '', delta = 1, success = () => {}, fail = () => {} }
   };
 
   if (type === 'navigateTo') {
+    if (pages.length >= 10) return fail({
+      errMsg: `${type}:fail`,
+    });
     pages.push(newPage);
   } else if (type === 'redirectTo') {
     pages[pages.length - 1] = newPage;

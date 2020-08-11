@@ -255,13 +255,15 @@ describe('linkTo', () => {
 
   test('navigateTo', () => {
     linkTo('index');
-    expect(getPage().route).toMatch(/^pages\/index\/index/);
+    expect(getPage().route).toEqual('pages/index/index');
     expect(getCurrentPages()).toHaveLength(3);
 
-    linkTo('product');
+    linkTo('/pages/product/product');
+    expect(getPage().route).toEqual('pages/product/product');
+    expect(getCurrentPages()).toHaveLength(4);
     linkTo('detail');
-    linkTo('index', 'redirect');
-    expect(getPage().route).toMatch(/index/);
+    linkTo('cart', 'redirect');
+    expect(getPage().route).toEqual('pages/cart/cart');
     expect(getCurrentPages()).toHaveLength(5);
   });
 
@@ -292,21 +294,31 @@ describe('linkTo', () => {
 
   test('非标准路径', () => {
     linkTo('pages/list/index', 'navigate');
-    expect(getPage().route).toMatch(/^pages\/list\/index/);
+    expect(getPage().route).toEqual('pages/list/index');
     expect(getCurrentPages()).toHaveLength(2);
 
     linkTo('/common/fail/fail');
-    expect(getPage().route).toMatch(/fail/);
+    expect(getPage().route).toEqual('common/fail/fail');
     expect(getCurrentPages()).toHaveLength(3);
 
-    linkTo('fail/fail');
-    expect(getPage().route).toMatch(/^pages\/fail\/fail/);
+    linkTo('fail/index');
+    expect(getPage().route).toEqual('pages/fail/index');
+
+    linkTo('?a=1');
+    expect(getPage().route).toEqual('pages/fail/index');
+
+    linkTo('pages/list');
+    expect(getPage().route).toEqual('pages/list/list');
   });
 
   test('with query string', () => {
     linkTo('index?bingo=1', { a: 1, b: { c: 3, d: 4 } });
     expect(getPage().route).toMatch(/^pages\/index\/index/);
     expect(getPage().query).toEqual({ a: 1, b: '{"c":3,"d":4}', bingo: 1 });
+
+    linkTo('pages/list?a=1');
+    expect(getPage().route).toEqual('pages/list/list');
+    expect(getPage().query).toEqual({ a: 1});
   });
 });
 
