@@ -1,6 +1,6 @@
 {
   "name": "miniprogram-tools",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "weixin miniprogram utility tools without dependencies",
   "main": "index.js",
   "scripts": {
