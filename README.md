@@ -357,4 +357,3 @@ linkTo('coupon', {
 - `titleBarHeight`: 标题栏高度
 - `systemName`: 当前系统的名字，全小写
 - `pxRatio`: 根据屏幕宽度计算得到的px比率
-- `isIPhoneX`: 是否为iPhoneX以上机型
