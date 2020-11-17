@@ -165,11 +165,10 @@ const getSystemInfo = () => {
   const {
     system,
     screenWidth,
-    model,
   } = sysInfo;
+  const systemName = system.split(' ')[0].toLowerCase();
   // getMenuButtonBoundingClientRect有兼容问题，暂时舍弃
   // 默认iOS为44px，安卓则为48px
-  const systemName = system.split(' ')[0].toLowerCase();
   const titleBarHeight = systemName.includes('android') ? 48 : 44;
   return {
     ...sysInfo,
@@ -177,7 +176,6 @@ const getSystemInfo = () => {
     systemName,
     // 根据屏幕宽度计算像素比率
     pxRatio: screenWidth / 750,
-    isIPhoneX: !!model.match(/^iPhone ?(?:X|12)/),
   };
 };
 
