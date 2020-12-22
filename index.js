@@ -17,6 +17,7 @@ export {
   generateSignature,
   compareVersions,
   sleep,
+  randomID,
 } from './utils';
 
 export {
