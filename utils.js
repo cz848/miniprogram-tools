@@ -109,6 +109,9 @@ const compareVersions = (v1, op, v2 = '') => {
 // 等待n毫秒
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms || 1500));
 
+// 用时间+随机数的36进制表示法(0-9a-z)生成随机字串
+const randomID = () => Math.floor(Date.now() + Math.random() * 1e15).toString(36);
+
 export {
   isPlainObject,
   isEmptyObject,
@@ -122,4 +125,5 @@ export {
   generateSignature,
   compareVersions,
   sleep,
+  randomID,
 };

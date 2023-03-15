@@ -17,6 +17,7 @@ export {
   generateSignature,
   compareVersions,
   sleep,
+  randomID,
 } from './utils';
 
 export {
@@ -28,6 +29,7 @@ export {
   alert,
   confirm,
   toast,
+  formatPath,
   linkTo,
   getSystemInfo,
 } from './weapp';

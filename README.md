@@ -55,6 +55,7 @@ import { mp, storage } from '@tylerchao/miniprogram-tools/weapp';
   + [confirm](#confirm)
   + [block](#block)
   + [toast](#toast)
+  + [formatPath](#formatPath)
   + [linkTo](#linkTo)
   + [getSystemInfo](#getSystemInfo)
 
@@ -330,6 +331,19 @@ block('此商品已下架。');
 toast('加载失败，请重试');
 toast('加载成功', 'success');
 ```
+**<a id="formatPath">formatPath</a>(path: String)**: 转换页面路径为标准路径`/pages/index/index`形式
+
+- `path`: 默认页面要放在`pages`目录，这时只需写页面文件名，请看示例：
+
+```javascript
+formatPath('index'); // 默认不需要带路径，会转成/pages/index/index
+formatPath('cart/index'); // => /pages/cart/index
+formatPath('pages/fail/fail'); // => /pages/fail/fail
+formatPath('pages/fail'); // => /pages/fail/fail
+formatPath('/common/fail/fail'); // 如不在pages文件夹请写绝对路径 => /common/fail/fail
+formatPath('index?a=1'); // => /pages/index/index?a=1
+formatPath('coupon'); // => /pages/coupon/coupon
+```
 
 **<a id="linkTo">linkTo</a>(path: String, query?: Object | String, openType?: String)**: 跳转页面
 
@@ -344,7 +358,7 @@ linkTo('index', 'redirect'); // 同上
 linkTo('cart/index'); // => /pages/cart/index
 linkTo('pages/fail/fail'); // => /pages/fail/fail
 linkTo('pages/fail'); // => /pages/fail/fail
-linkTo('/common/fail/fail'); // 不在pages文件夹请写绝对路径
+linkTo('/common/fail/fail'); // 如不在pages文件夹请写绝对路径
 linkTo('index?a=1'); // 可直接带路径参数
 linkTo('coupon', {
   id: 1,

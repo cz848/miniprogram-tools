@@ -188,6 +188,7 @@ export {
   alert,
   confirm,
   toast,
+  formatPath,
   linkTo,
   getSystemInfo,
 };
