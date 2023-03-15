@@ -10,6 +10,7 @@ import {
   confirm,
   block,
   toast,
+  formatPath,
   linkTo,
   getSystemInfo,
 } from '../weapp';
@@ -246,11 +247,21 @@ describe('showModal/showToast', () => {
   });
 });
 
-describe('linkTo', () => {
+describe('formatPath/linkTo', () => {
   test('first set', () => {
     setCurrentPages(pageStack);
     expect(getPage().route).toMatch('list');
     expect(getCurrentPages()).toHaveLength(2);
+  });
+
+  test('formatPath', () => {
+    expect(formatPath('index')).toEqual('/pages/index/index');
+    expect(formatPath('pages/list')).toEqual('/pages/list/list');
+    expect(formatPath('pages/index')).toEqual('/pages/index/index');
+    expect(formatPath('demo/index')).toEqual('/pages/demo/index');
+    expect(formatPath('product')).toEqual('/pages/product/product');
+    expect(formatPath('/common/fail/fail')).toEqual('/common/fail/fail');
+    expect(formatPath('?a=1')).toEqual('?a=1');
   });
 
   test('navigateTo', () => {
@@ -338,7 +349,6 @@ describe('getSystemInfo', () => {
       titleBarHeight: expect.oneOf(44, 48),
       pxRatio: expect.any(Number),
       systemName: expect.oneOf('android', 'ios'),
-      isIPhoneX: expect.any(Boolean),
       brand: expect.any(String),
     });
   });
